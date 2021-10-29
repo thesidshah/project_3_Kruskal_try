@@ -3,22 +3,6 @@ import java.util.Objects;
 class Edges {
 
 
-  public int getSrc() {
-    return src;
-  }
-
-  public void setSrc(int src) {
-    this.src = src;
-  }
-
-  public int getDest() {
-    return dest;
-  }
-
-  public void setDest(int dest) {
-    this.dest = dest;
-  }
-
   private int src, dest;
 
   public Edges(int src, int dest) {
@@ -43,5 +27,21 @@ class Edges {
   @Override
   public int hashCode() {
     return Objects.hash(src + dest);
+  }
+
+  public int getSrc() {
+    return src;
+  }
+
+  public void setSrc(int src) {
+    this.src = src;
+  }
+
+  public int getDest() {
+    return dest;
+  }
+
+  public void setDest(int dest) {
+    this.dest = dest;
   }
 }

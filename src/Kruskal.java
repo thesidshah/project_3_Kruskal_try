@@ -48,7 +48,7 @@ public class Kruskal {
   }
   // The main function to construct MST using Kruskal's
   // algorithm
-  void KruskalMST(int doc)
+  Edges [] KruskalMST(int doc)
   {
     // Tnis will store the resultant MST
     ArrayList <Edges> result;
@@ -79,10 +79,10 @@ public class Kruskal {
     int count = 0;
     // Number of edges to be taken is equal to V-1
     if((V + doc) > edge.length) {
-      throw new IllegalArgumentException("Degree of connectivity is more than "
-          + "the available edges");
+      throw new IllegalArgumentException("Degree of connectivity " + doc +" is more than "
+          + "the available edges " + edge.length);
     }
-    while (e < (V + doc))
+    while (e < (V-1))
     {
       // Step 2: Pick the smallest edge. And increment
       // the index for next iteration
@@ -103,28 +103,27 @@ public class Kruskal {
       else {
         // Else save the next_edge
         removed.add(next_edge);
-        e++;
+//        e++;
         System.out.println("I am in removed");
         System.out.println(next_edge.getSrc() + "->" + next_edge.getDest());
       }
     }
-
     // print the contents of result[] to display
     // the built MST
     int k1 = 0;
-    System.out.println("Count = " + count);
-    while(k1 <= doc) {
-      System.out.println("removed edge is:");
-      System.out.println(removed.get(k1).getSrc() + "->" + removed.get(k1).getDest());
-      result.add(removed.get(k1++));
+    //System.out.println("Count = " + count);
+    while(e < edge.length) {
+      //System.out.println("removed edge is:");
+      //System.out.println(removed.get(k1).getSrc() + "->" + removed.get(k1).getDest());
+      removed.add(edge[e++]);
+//      result.add(removed.get(k1++));
     }
-    System.out.println("Following are the edges in "
-        + "the constructed MST");
 
-    for(i=0;i<result.size();i++)
-    {
-        System.out.println(result.get(i).getSrc() + " -- "
-            + result.get(i).getDest());
-      }
+    for(int l = 0; l < doc; l++) {
+      result.add(removed.get(l));
+    }
+    //System.out.println("Following are the edges in "
+        //+ "the constructed MST");
+    return result.toArray(new Edges[0]);
     }
 }

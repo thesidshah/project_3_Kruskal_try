@@ -6,7 +6,7 @@ public class Cave {
 //  private final boolean south;
 //  private final boolean east;
 //  private final boolean west;
-//  private List<Treasure> treasure;
+  private List<Treasure> treasure;
   String type;
   boolean isBorder;
   boolean isCorner;
@@ -14,6 +14,10 @@ public class Cave {
   Position south;
   Position east;
   Position west;
+  int north_id;
+  int south_id;
+  int east_id;
+  int west_id;
   static int id = 0;
   int caveId;
 
@@ -22,9 +26,13 @@ public class Cave {
    */
   public Cave() {
     north = south = east = west = null;
-//    treasure= new ArrayList<>();
+    treasure= new ArrayList<>();
     isBorder = isCorner = false;
     caveId = id++;
+    north_id = -1;
+    south_id = -1;
+    east_id = -1;
+    west_id = -1;
   }
 
   public Cave(Position north, Position south, Position east, Position west) {
@@ -32,14 +40,14 @@ public class Cave {
     this.south = south;
     this.east = east;
     this.west = west;
-//    treasure = new ArrayList<>();
+    treasure = new ArrayList<>();
     isBorder = isCorner = false;
     caveId = id++;
   }
 
   public String state() {
-    String st = //treasure.toString()
-         "\nNorth: " + north
+    String st = treasure.toString()
+        + "\nNorth: " + north
         + "\nSouth: " + south
         + "\nEast: " + east
         + "\nWest: " + west;
@@ -85,7 +93,7 @@ public class Cave {
     }
     if (c == 2) {
       type = "Tunnel";
-//      treasure = null;
+      treasure = null;
     }
     else {
       type = "Cave";
