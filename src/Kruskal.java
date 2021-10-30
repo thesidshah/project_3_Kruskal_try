@@ -91,7 +91,7 @@ public class Kruskal {
       int x = find(subsets, next_edge.getSrc());
       int y = find(subsets, next_edge.getDest());
 
-      // If including this edge does't cause cycle,
+      // If including this edge doesn't cause cycle,
       // include it in result and increment the index
       // of result for next edge
       if (x != y) {

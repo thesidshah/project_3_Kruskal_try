@@ -15,6 +15,7 @@ public class ActualDungeonTest {
       System.out.println();
     }
   }
+
   @Test
   public void testGenerateValidEdgesNonWrapping() throws IOException {
     ActualDungeon ad = new ActualDungeon(3,3, 0, false);
@@ -26,14 +27,16 @@ public class ActualDungeonTest {
     ad.displayDungeon();
     System.out.println(ad.dungeon[1][2].south_id);
   }
+
   @Test
   public void testMST() {
-    ActualDungeon ad = new ActualDungeon(3,3, 0, false);
+    ActualDungeon ad = new ActualDungeon(3,3, 2, false);
     ad.generateDungeon();
     Kruskal k = new Kruskal((ActualDungeon.size[0]*ActualDungeon.size[1]),ad.getValidEdges().size(), ad.getValidEdges().toArray(new Edges[0]));
     Edges [] ed = k.KruskalMST(0);
     for(Edges ed2 : ed) {
       System.out.println(ed2.getSrc()+"->"+ed2.getDest());
     }
+    ad.displayDungeon();
   }
 }

@@ -1,5 +1,7 @@
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,6 +13,10 @@ public class ActualDungeon {
   Set<Edges> validEdges;
   boolean isWrapping;
   int doc;
+  Position playerPosition;
+  List<Position> treasure;
+  int start;
+  int end;
 
   public Set<Edges> getValidEdges() {
     return validEdges;
@@ -24,8 +30,12 @@ public class ActualDungeon {
     dungeon = new Cave[rows][cols];
     validEdges = new HashSet<>();
     size = new int[2];
+    start = 0;
+    end = 0;
     size[0] = rows;
     size[1] = cols;
+    treasure = new ArrayList<>();
+    playerPosition = new Position(-1,-1);
     for (int i = 0; i < rows; i++) {
       for (int k = 0; k < cols; k++) {
         dungeon[i][k] = new Cave();
@@ -45,7 +55,7 @@ public class ActualDungeon {
     Kruskal k = new Kruskal(size[0]*size[1],validEdges.size(),validEdges.toArray(new Edges[0]));
     Edges [] pathways = k.KruskalMST(doc);
     updateDungeon(pathways);
-//    validEdges = Stream.of(pathways).collect(Collectors.toSet());
+    validEdges = Stream.of(pathways).collect(Collectors.toSet());
   }
 
   private void updateDungeon(Edges [] pathways) {
@@ -86,6 +96,11 @@ public class ActualDungeon {
         }
       }
     }
+  }
+  private void generateStartEnd() {
+    start = 0;
+    end = 1;
+    playerPosition = getPosition(0);
   }
   private Position getPosition(int id) {
     int row;
@@ -133,6 +148,7 @@ public class ActualDungeon {
   }
 
   String displayDungeon() {
+    generateStartEnd();
     StringBuilder sb = new StringBuilder();
     for(int i = 0; i < size[0]; i++) {
       for(int j = 0; j < size[1]; j++) {
@@ -150,7 +166,12 @@ public class ActualDungeon {
         if(c.east_id != -1) {
           System.out.print("-");
         }
-        System.out.print(c.caveId);
+        if(c.caveId == dungeon[playerPosition.x][playerPosition.y].caveId) {
+          System.out.print("P");
+        }
+        else {
+          System.out.print(c.caveId);
+        }
         if(c.west_id != -1) {
           System.out.print("-");
         }
