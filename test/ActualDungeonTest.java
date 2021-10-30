@@ -2,6 +2,7 @@
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class ActualDungeonTest {
 
@@ -30,10 +31,10 @@ public class ActualDungeonTest {
 
   @Test
   public void testMST() {
-    ActualDungeon ad = new ActualDungeon(3,3, 2, true);
+    ActualDungeon ad = new ActualDungeon(3,3, 14, true);
+//    Kruskal k = new Kruskal((ad.size[0]*ad.size[1]),ad.getValidEdges().size(), ad.getValidEdges().toArray(new Edges[0]));
     ad.generateDungeon();
-    Kruskal k = new Kruskal((ActualDungeon.size[0]*ActualDungeon.size[1]),ad.getValidEdges().size(), ad.getValidEdges().toArray(new Edges[0]));
-    Edges [] ed = k.KruskalMST(0);
+    Set<Edges> ed = ad.validEdges;
     for(Edges ed2 : ed) {
       System.out.println(ed2.getSrc()+"->"+ed2.getDest());
     }
