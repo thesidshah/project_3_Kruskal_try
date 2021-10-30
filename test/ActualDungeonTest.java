@@ -30,7 +30,7 @@ public class ActualDungeonTest {
 
   @Test
   public void testMST() {
-    ActualDungeon ad = new ActualDungeon(3,3, 2, false);
+    ActualDungeon ad = new ActualDungeon(3,3, 2, true);
     ad.generateDungeon();
     Kruskal k = new Kruskal((ActualDungeon.size[0]*ActualDungeon.size[1]),ad.getValidEdges().size(), ad.getValidEdges().toArray(new Edges[0]));
     Edges [] ed = k.KruskalMST(0);

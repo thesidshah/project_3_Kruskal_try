@@ -104,8 +104,8 @@ public class Kruskal {
         // Else save the next_edge
         removed.add(next_edge);
 //        e++;
-        System.out.println("I am in removed");
-        System.out.println(next_edge.getSrc() + "->" + next_edge.getDest());
+//        System.out.println("I am in removed");
+//        System.out.println(next_edge.getSrc() + "->" + next_edge.getDest());
       }
     }
     // print the contents of result[] to display

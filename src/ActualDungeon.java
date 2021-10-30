@@ -58,7 +58,18 @@ public class ActualDungeon {
     validEdges = Stream.of(pathways).collect(Collectors.toSet());
   }
 
+  /**
+   * I am still thinking of applying checks here.
+   * Will go through this if wrapping dungeon fails.
+   * @param pathways
+   */
   private void updateDungeon(Edges [] pathways) {
+    Position x2 = getPosition(0);
+    Position x1 = getPosition(6);
+
+    System.out.println(x1 +"->"+x2);
+    System.out.println(x2 +"->"+x1);
+
     for(Edges e : pathways) {
       Position x = getPosition(e.getSrc());
       Position y = getPosition(e.getDest());
@@ -79,21 +90,30 @@ public class ActualDungeon {
         }
       }
        if(x.y == y.y) {
-        if(x.x > y.x) {
-          dungeon[x.x][x.y].north = y;
-          dungeon[x.x][x.y].north_id = dungeon[y.x][y.y].caveId;
+           if (x.x > y.x) {
+             if(y.x != 0 || x.x!= 0) {
+               dungeon[x.x][x.y].north = y;
+               dungeon[x.x][x.y].north_id = dungeon[y.x][y.y].caveId;
 
 
-          dungeon[y.x][y.y].south_id = dungeon[x.x][x.y].caveId;
-          dungeon[y.x][y.y].south = x;
-        }
-         if(x.x < y.x) {
-          dungeon[x.x][x.y].south = y;
-          dungeon[x.x][x.y].south_id = dungeon[y.x][y.y].caveId;
+               dungeon[y.x][y.y].south_id = dungeon[x.x][x.y].caveId;
+               dungeon[y.x][y.y].south = x;
+             }
+             else{
+               if(y.y == 0)
+               System.out.println("Inside y = 0");
+               if(x.x == 0)
+                 System.out.println("Inside x = 0");
+             }
+           }
+           if (x.x < y.x) {
+             dungeon[x.x][x.y].south = y;
+             dungeon[x.x][x.y].south_id = dungeon[y.x][y.y].caveId;
 
-           dungeon[y.x][y.y].north_id = dungeon[x.x][x.y].caveId;
-           dungeon[y.x][y.y].north = x;
-        }
+             dungeon[y.x][y.y].north_id = dungeon[x.x][x.y].caveId;
+             dungeon[y.x][y.y].north = x;
+           }
+
       }
     }
   }
@@ -117,6 +137,25 @@ public class ActualDungeon {
     throw new IllegalArgumentException("Id does not exist");
   }
   private void genWrapEdges() {
+    for(int i = 0; i < size[0]; i++) {
+      for(int j = 0; j < size[1]; j++) {
+        for (int dir = 0; dir < 4; dir++) {
+          Position p = new Position(i, j);
+          Directions d = Directions.North;
+          int [] check = d.moveInDirection(p,dir);
+          for (int c = 0; c < 2; c++) {
+            if (check[c] == -1) {
+              check[c] = size[1] - 1;
+            }
+            if (check[c] == size[1]) {
+              check[c] = 0;
+            }
+          }
+          Edges actualEdge = new Edges(dungeon[i][j].caveId, dungeon[check[0]][check[1]].caveId);
+          validEdges.add(actualEdge);
+        }
+      }
+    }
   }
 
 //  private boolean ifValidContainsEdge(Edges actualEdge) {
