@@ -12,7 +12,6 @@ public class Kruskal {
       V = v;
       E = e;
       edge = actualEdges;
-      System.out.println("Total available edges are " + actualEdges.length);
     }
   int find(subset subsets[], int i)
   {
@@ -110,7 +109,10 @@ public class Kruskal {
       removed.add(edge[e++]);
 //      result.add(removed.get(k1++));
     }
-
+    if(removed.size() < doc) {
+      throw new IllegalArgumentException("The degree of connectivity exceeds "
+          + removed.size() + " the limit");
+    }
     for(int l = 0; l < doc; l++) {
       result.add(removed.get(l));
     }

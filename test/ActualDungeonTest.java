@@ -40,4 +40,11 @@ public class ActualDungeonTest {
     }
     ad.displayDungeon();
   }
+
+  @Test
+  public void testStartEnd() {
+    ActualDungeon ad = new ActualDungeon(4,4,16,false);
+    ad.generateDungeon();
+    ad.displayDungeon();
+  }
 }
