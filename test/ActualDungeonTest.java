@@ -1,4 +1,5 @@
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -8,10 +9,10 @@ public class ActualDungeonTest {
 
   @Test
   public void testDungeonCreation() {
-    ActualDungeon ad = new ActualDungeon(5,5, 3, false);
+    ActualDungeon ad = new ActualDungeon(5,5, 3, 12,false);
     for(int i = 0; i < 5; i++) {
       for(int k = 0; k < 5; k++) {
-        System.out.print(ad.dungeon[i][k].caveId);
+        System.out.println(ad.dungeon[i][k].state());
       }
       System.out.println();
     }
@@ -19,7 +20,7 @@ public class ActualDungeonTest {
 
   @Test
   public void testGenerateValidEdgesNonWrapping() throws IOException {
-    ActualDungeon ad = new ActualDungeon(3,3, 0, false);
+    ActualDungeon ad = new ActualDungeon(5,5, 0, 12,false);
     ad.generateDungeon();
     for(Edges i : ad.validEdges) {
       System.out.println(i.getSrc() + "->" + i.getDest());
@@ -31,20 +32,21 @@ public class ActualDungeonTest {
 
   @Test
   public void testMST() {
-    ActualDungeon ad = new ActualDungeon(3,3, 14, true);
+    ActualDungeon ad = new ActualDungeon(5,5, 14, 12,true);
 //    Kruskal k = new Kruskal((ad.size[0]*ad.size[1]),ad.getValidEdges().size(), ad.getValidEdges().toArray(new Edges[0]));
     ad.generateDungeon();
     Set<Edges> ed = ad.validEdges;
     for(Edges ed2 : ed) {
       System.out.println(ed2.getSrc()+"->"+ed2.getDest());
     }
-    ad.displayDungeon();
+    System.out.println(ad.displayDungeon());
   }
 
   @Test
   public void testStartEnd() {
-    ActualDungeon ad = new ActualDungeon(4,4,16,false);
+    ActualDungeon ad = new ActualDungeon(5,5,16,12,false);
     ad.generateDungeon();
-    ad.displayDungeon();
+    String str = ad.displayDungeon();
+    Assert.assertTrue(str.contains("P") && str.contains("E"));
   }
 }

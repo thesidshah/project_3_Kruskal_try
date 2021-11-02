@@ -6,10 +6,8 @@ public class Cave {
 //  private final boolean south;
 //  private final boolean east;
 //  private final boolean west;
-  private List<Treasure> treasure;
+  List<Treasure> treasure;
   String type;
-  boolean isBorder;
-  boolean isCorner;
   Position north;
   Position south;
   Position east;
@@ -18,35 +16,41 @@ public class Cave {
   int south_id;
   int east_id;
   int west_id;
-  static int id = 0;
+  //Static variable used for generating ids.
+  private static int id = 0;
   int caveId;
+  int caveValue;
 
   /**
    * default constructor of a cave.
    */
   public Cave() {
     north = south = east = west = null;
-    treasure= new ArrayList<>();
-    isBorder = isCorner = false;
+    treasure = new ArrayList<>();
     caveId = id++;
     north_id = -1;
     south_id = -1;
     east_id = -1;
     west_id = -1;
-  }
-
-  public Cave(Position north, Position south, Position east, Position west) {
-    this.north = north;
-    this.south = south;
-    this.east = east;
-    this.west = west;
-    treasure = new ArrayList<>();
-    isBorder = isCorner = false;
-    caveId = id++;
+    int caveValue;
   }
 
   public String state() {
-    String st = treasure.toString()
+    String st = "Cave : " + caveId
+        + "\nType: " + type + "\n"
+        + "Treasures:" + treasure
+        + "\nNorth: " + north
+        + "\nSouth: " + south
+        + "\nEast: " + east
+        + "\nWest: " + west;
+    return st;
+  }
+
+  @Override
+  public String toString() {
+    String st = "Cave : " + caveId
+        + "\nType: " + type + "\n"
+        + "Treasures:" + this.treasure
         + "\nNorth: " + north
         + "\nSouth: " + south
         + "\nEast: " + east
@@ -77,7 +81,7 @@ public class Cave {
     }
   }
 
-  private void setType() {
+   void setType() {
     int c = 0;
     if (north != null) {
       c++;
@@ -100,6 +104,45 @@ public class Cave {
     }
   }
   boolean canSetTreasure() {
-    return !type.equals("tunnel");
+    return !type.equalsIgnoreCase("tunnel");
+  }
+
+  public void addTreasure(Treasure e) {
+//    treasure = new ArrayList<>();
+    if(treasure == null) {
+      System.out.println("Inside a tunnel");
+    }
+    treasure.add(e);
+    caveValue += e.getValue();
+  }
+
+  public Treasure pickTreasure() {
+    if(this.treasure.isEmpty()) {
+      System.out.println("Inside empty cave");
+      return null;
+    }
+    System.out.println(caveId);
+    System.out.println(treasure);
+    Treasure e = treasure.remove(0);
+    System.out.println(treasure);
+    return e;
+  }
+
+  public boolean hasTreasure() {
+    return treasure != null && !treasure.isEmpty();
+  }
+
+  //Package private for dungeon to call.
+   void cavePathsAvailable(Position x) {
+    System.out.println("Dungeon paths available at Position :" + ActualDungeon.getPosition(caveId)
+        + "And the corresponding id is :" + caveId);
+    System.out.println("North -> " + north);
+    System.out.println("North id-> " + north_id);
+    System.out.println("South -> " + south);
+    System.out.println("South id-> " + south_id);
+    System.out.println("East -> " + east);
+    System.out.println("East id-> " + east_id);
+    System.out.println("West -> " + west);
+    System.out.println("West id-> " + west_id);
   }
 }

@@ -3,40 +3,13 @@ import java.util.LinkedList;
 
 public class Bfs {
 
-  // Driver Program
-//  public static void main(String args[])
-//  {
-//    // No of vertices
-//    int v = 8;
-//
-//    // Adjacency list for storing which vertices are connected
-//    ArrayList<ArrayList<Integer>> adj =
-//        new ArrayList<ArrayList<Integer>>(v);
-//    for (int i = 0; i < v; i++) {
-//      adj.add(new ArrayList<Integer>());
-//    }
-//
-//    // Creating graph given in the above diagram.
-//    // add_edge function takes adjacency list, source
-//    // and destination vertex as argument and forms
-//    // an edge between them.
-//    addEdge(adj, 0, 1);
-//    addEdge(adj, 0, 3);
-//    addEdge(adj, 1, 2);
-//    addEdge(adj, 3, 4);
-//    addEdge(adj, 3, 7);
-//    addEdge(adj, 4, 5);
-//    addEdge(adj, 4, 6);
-//    addEdge(adj, 4, 7);
-//    addEdge(adj, 5, 6);
-//    addEdge(adj, 6, 7);
-//    int source = 0, dest = 7;
-//    printShortestDistance(adj, source, dest, v);
-//  }
-
+  /**
+   * queue for performing BFS.
+   */
+  static LinkedList<Integer> queue;
   // function to form edge between two vertices
   // source and dest
-  public static void addEdge(ArrayList<ArrayList<Integer>> adj, int i, int j)
+   static void addEdge(ArrayList<ArrayList<Integer>> adj, int i, int j)
   {
     adj.get(i).add(j);
     adj.get(j).add(i);
@@ -44,7 +17,7 @@ public class Bfs {
 
   // function to print the shortest distance and path
   // between source vertex and destination vertex
-  public static int ShortestDistance(
+   static int ShortestDistance(
       ArrayList<ArrayList<Integer>> adj,
       int s, int dest, int v)
   {
@@ -55,8 +28,8 @@ public class Bfs {
     int dist[] = new int[v];
 
     if (!BFS(adj, s, dest, v, pred, dist)) {
-      System.out.println("Given source and destination" +
-          "are not connected");
+      System.out.println("Given source and destination "
+          + "are not connected");
       return s;
     }
 
@@ -68,9 +41,6 @@ public class Bfs {
       path.add(pred[crawl]);
       crawl = pred[crawl];
     }
-
-    // Print distance
-//    System.out.println("Shortest path length is: " + dist[dest]);
     return dist[dest];
   }
 
@@ -83,7 +53,7 @@ public class Bfs {
     // a queue to maintain queue of vertices whose
     // adjacency list is to be scanned as per normal
     // BFS algorithm using LinkedList of Integer type
-    LinkedList<Integer> queue = new LinkedList<Integer>();
+    queue = new LinkedList<Integer>();
 
     // boolean array visited[] which stores the
     // information whether ith vertex is reached
@@ -124,5 +94,19 @@ public class Bfs {
       }
     }
     return false;
+  }
+
+  /**
+   * Function to get the path while testing
+   * for the player.
+   * @return path from start to end.
+   * @throws IllegalArgumentException when BFS is not performed.
+   */
+  int [] getPath() throws IllegalArgumentException {
+     if(queue == null) {
+       throw new IllegalArgumentException("Please perform BFS first.");
+     }
+    int[] arr = queue.stream().mapToInt(Integer::intValue).toArray();
+     return arr;
   }
 }

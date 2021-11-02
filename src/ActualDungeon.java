@@ -1,14 +1,11 @@
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 public class ActualDungeon {
-  public Cave [][] dungeon;
+  public static Cave [][] dungeon;
   static int [] size;
   Set<Edges> validEdges;
   boolean isWrapping;
@@ -17,6 +14,7 @@ public class ActualDungeon {
   List<Position> treasure;
   int start;
   int end;
+  int treasurePercent;
 
   public Set<Edges> getValidEdges() {
     return validEdges;
@@ -26,15 +24,22 @@ public class ActualDungeon {
     this.validEdges = validEdges;
   }
 
-  ActualDungeon(int rows, int cols, int doc, boolean isWrapping) throws IllegalArgumentException {
+  ActualDungeon(int rows, int cols, int doc, int treasurePercent, boolean isWrapping ) throws IllegalArgumentException {
 
-    if(rows < 4 || cols < 4) {
+    if(rows < 5 && cols < 5) {
       throw new IllegalArgumentException("The number of rows and columns"
-        + "should be at least 4");
+        + "should be at least 5");
     }
-
+    if(treasurePercent < 0) {
+      System.out.println("The treasure% passed should be non negative.");
+    }
     dungeon = new Cave[rows][cols];
     validEdges = new HashSet<>();
+    for (int i = 0; i < rows; i++) {
+      for (int k = 0; k < cols; k++) {
+        dungeon[i][k] = new Cave();
+      }
+    }
     size = new int[2];
     start = 0;
     end = 0;
@@ -42,13 +47,11 @@ public class ActualDungeon {
     size[1] = cols;
     treasure = new ArrayList<>();
     playerPosition = new Position(-1,-1);
-    for (int i = 0; i < rows; i++) {
-      for (int k = 0; k < cols; k++) {
-        dungeon[i][k] = new Cave();
-      }
-    }
     this.isWrapping = isWrapping;
     this.doc = doc;
+    this.treasurePercent= treasurePercent;
+    generateDungeon();
+
   }
 
   protected void generateDungeon() {
@@ -62,7 +65,19 @@ public class ActualDungeon {
     Edges [] pathways = k.KruskalMST(doc);
     updateDungeon(pathways);
     validEdges = Stream.of(pathways).collect(Collectors.toSet());
+    updateState();
     generateStartEnd();
+    updateTreasures(treasurePercent);
+//    playerPosition = getPosition(start);
+//    System.out.println("Player position after updated treasure points " + playerPosition);
+  }
+
+  private void updateState() {
+    for(int i = 0; i < size[0]; i++) {
+      for (Cave c : dungeon[i]) {
+        c.setType();
+      }
+    }
   }
 
   private void updateEast(Position x, Position y) {
@@ -138,14 +153,14 @@ public class ActualDungeon {
     }
   }
 
-  private Position getPosition(int id) {
+  //package private for cave to call.
+   static Position getPosition(int id) {
 
     if(id == 0) {
       return new Position(0,0);
     } else {
 //      row = (int) Math.floor(id / (size[0]));
 //      System.out.println("Calculated row is " + row);
-
 
     for(int i = 0; i < size[0]; i++) {
       for (int j = 0; j < size[1]; j++) {
@@ -166,12 +181,14 @@ public class ActualDungeon {
           int [] check = d.moveInDirection(p,dir);
           for (int c = 0; c < 2; c++) {
             if (check[c] == -1) {
-              check[c] = size[1] - 1;
+                check[c] = size[c] - 1;
             }
-            if (check[c] == size[1]) {
+            if (check[c] == size[1] || check[c] == size[0]) {
               check[c] = 0;
             }
           }
+//          System.out.println("check[0]:"+check[0]);
+//          System.out.println("check[1]:"+check[1]);
           Edges actualEdge = new Edges(dungeon[i][j].caveId, dungeon[check[0]][check[1]].caveId);
           validEdges.add(actualEdge);
         }
@@ -195,79 +212,89 @@ public class ActualDungeon {
     }
   }
 
+  /**
+   * Need to work on its time complexity.
+   * @return String dump of dungeon for testing.
+   */
   String displayDungeon() {
 //    generateStartEnd();
     StringBuilder sb = new StringBuilder();
     for(int i = 0; i < size[0]; i++) {
       for(int j = 0; j < size[1]; j++) {
-          System.out.print(" ");
+          sb.append(" ");
         if(dungeon[i][j].north_id != -1) {
-          System.out.print("|");
+          sb.append("|");
         }
-          //System.out.print(" ");
       }
-      System.out.println();
+      sb.append("\n");
       for(int j = 0; j < size[1]; j++) {
         Cave c = dungeon[i][j];
         if(c.west_id != -1) {
-          System.out.print("-");
+          sb.append("-");
         }
         if(c.caveId == start && c.caveId != getId(playerPosition)) {
-          System.out.print("S");
+          sb.append("S");
         }
         else if(c.caveId == dungeon[playerPosition.x][playerPosition.y].caveId) {
-          System.out.print("P");
+          sb.append("P");
         }
         else if(c.caveId == end) {
-          System.out.print("E");
+          sb.append("E");
         }
         else {
-          System.out.print(c.caveId);
+          sb.append(c.caveId);
         }
         if(c.east_id != -1) {
-          System.out.print("-");
+          sb.append("-");
         }
         else {
-          System.out.print(" ");
+          sb.append(" ");
         }
       }
-      System.out.println();
+      sb.append("\n");
       for(int j = 0; j < size[1]; j++) {
-        System.out.print(" ");
+        sb.append(" ");
         if(dungeon[i][j].south_id != -1) {
-          System.out.print("|");
+          sb.append("|");
         }
 
       }
-      System.out.println();
+      sb.append("\n");
     }
-    return null;
+    return sb.toString();
   }
 
   //remember to make this method private
-   void generateStartEnd() {
+  //Made it package private for cases where
+  // the start and player position are not on the board.
+  void generateStartEnd() {
 
     int count = 0;
     while(count <= 200) {
       start = (int)Math.floor(Math.random() * ((size[0] * size[1]) - 1));
       end = (int)Math.floor(Math.random() * ((size[0] * size[1]) - 1));
-      System.out.println("Generated start: " + start);
-      System.out.println("Generated end: " + end);
-      playerPosition = getPosition(start);
+//      System.out.println("Generated start: " + start);
+//      System.out.println("Generated end: " + end);
+//      playerPosition = getPosition(start);
 //      boolean dfs = DFS(getPosition(start), 0, end);
       int bfs_dist = BFS();
 //      System.out.println(String.format("For starting id %d and end id %d \n" +
 //          "using DFS we get that the distance is more than 5 or not? ",start,end) + dfs);
       count++;
-      System.out.println(count + ":: failed Iteration");
+      playerPosition = getPosition(start);
+//      System.out.println("start is " + start);
+//      System.out.println("Player position is "+ playerPosition);
+      System.out.println(count + ":: failed Iteration");// remember to delete this
       if(bfs_dist >= 5) {
-        System.out.println(count + ":: Iteration");
+        playerPosition = getPosition(start);
+        System.out.println("Start is :: "+ start);
+        System.out.println(playerPosition);
         break;
       }
     }
 
   }
-  private int getId(Position p) {
+  static int getId(Position p) {
     return dungeon[p.x][p.y].caveId;
   }
   List<Integer> visited = new ArrayList<>();
@@ -288,106 +315,18 @@ public class ActualDungeon {
     }
 
 
-  private boolean DFS(Position check, int count, int end) {
-//    System.out.println("current position ->" + check);
-    if(check == null) {
-      return false;
-    }
-    if(visited.contains(getId(check))) {
-      return false;
-    }
-    if(count >= 6 && !visited.contains(dungeon[check.x][check.y].caveId)
-        && dungeon[check.x][check.y].caveId == end ) {
-      return true;
-    }
-    visited.add(dungeon[check.x][check.y].caveId);
-    return DFS(dungeon[check.x][check.y].north, count + 1, end)
-        || DFS(dungeon[check.x][check.y].south, count + 1, end)
-        || DFS(dungeon[check.x][check.y].east, count + 1, end)
-        || DFS(dungeon[check.x][check.y].west, count + 1, end);
-  }
-
-  protected void movePlayer() throws IOException {
-
-
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-    Directions direction = Directions.West;
-    Position isValid;
-    int [] arr = new int[0];
-    boolean flag;
-    System.out.println("Starting with player at position : " + playerPosition);
-    if(playerPosition.x == -1 || playerPosition.y == -1) {
-      System.out.println("Player position x or y is -1");
-      generateStartEnd();
-    }
-    while(getId(playerPosition) != end) {
-      dungeonPathsAvailable(playerPosition);
-      System.out.println("Enter the direction you wish to move in:");
-      char dir = (char) br.read();
-      br.readLine();
-      flag = false;
-      int x = 0;
-      int y = 0;
-      switch (dir) {
-        case 'U':
-        case 'u':
-          if (dungeon[playerPosition.x][playerPosition.y].north_id != -1) {
-            x = dungeon[playerPosition.x][playerPosition.y].north.x;
-            y = dungeon[playerPosition.x][playerPosition.y].north.y;
-            playerPosition.x = x;
-            playerPosition.y = y;
-            flag = true;
-          }
-          break;
-        case 'D':
-        case 'd':
-          if (dungeon[playerPosition.x][playerPosition.y].south_id != -1) {
-            x = dungeon[playerPosition.x][playerPosition.y].south.x;
-            y = dungeon[playerPosition.x][playerPosition.y].south.y;
-            playerPosition.x = x;
-            playerPosition.y = y;
-            flag = true;
-          }
-          break;
-        case 'L':
-        case 'l':
-          if (dungeon[playerPosition.x][playerPosition.y].west_id != -1) {
-            x = dungeon[playerPosition.x][playerPosition.y].west.x;
-            y = dungeon[playerPosition.x][playerPosition.y].west.y;
-            playerPosition.x = x;
-            playerPosition.y = y;
-            flag = true;
-          }
-          break;
-        case 'R':
-        case 'r':
-          if (dungeon[playerPosition.x][playerPosition.y].east_id != -1) {
-            x = dungeon[playerPosition.x][playerPosition.y].east.x;
-            y = dungeon[playerPosition.x][playerPosition.y].east.y;
-            playerPosition.x = x;
-            playerPosition.y = y;
-            flag = true;
-          }
-          break;
-        default:
-          continue;
-      } if(!flag) {
-        System.out.println("Can not move in this direction!");
+  private void updateTreasures(int numCaves) {
+    int l;
+    int id;
+    int count = numCaves;
+    do {
+      id = (int)Math.floor(Math.random() * numCaves);
+      Position x = getPosition(id);
+      if(dungeon[x.x][x.y].canSetTreasure()) {
+        Treasure e = Treasure.Gold;
+        dungeon[x.x][x.y].addTreasure(e);
+        count--;
       }
-    displayDungeon();
-    }
-  }
-  private void dungeonPathsAvailable(Position x) {
-    System.out.println("Dungeon paths available at Position :" + x
-        + "And the corresponding id is :" + getId(x));
-    System.out.println("North -> " + dungeon[x.x][x.y].north);
-    System.out.println("North id-> " + dungeon[x.x][x.y].north_id);
-    System.out.println("South -> " + dungeon[x.x][x.y].south);
-    System.out.println("South id-> " + dungeon[x.x][x.y].south_id);
-    System.out.println("East -> " + dungeon[x.x][x.y].east);
-    System.out.println("East id-> " + dungeon[x.x][x.y].east_id);
-    System.out.println("West -> " + dungeon[x.x][x.y].west);
-    System.out.println("West id-> " + dungeon[x.x][x.y].west_id);
+    } while(count >= 0);
   }
 }
