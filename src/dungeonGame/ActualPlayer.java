@@ -1,12 +1,16 @@
+package dungeonGame;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ActualPlayer implements Player {
   List<Treasure> treasureCollected;
   static Position p;
+  ActualDungeon aDungeon;
 
-  ActualPlayer(){
+  ActualPlayer(ActualDungeon aDungeon){
     treasureCollected = new ArrayList<>();
+    this.aDungeon = aDungeon;
   }
   public List<Treasure> getTreasureCollected() {
     return treasureCollected;
@@ -28,19 +32,19 @@ public class ActualPlayer implements Player {
   public String getState() {
     if(treasureCollected != null && !treasureCollected.isEmpty()) {
       return treasureCollected.toString()
-          + "Current Position is " + p + " " + ActualDungeon.getId(p);
+          + "Current dungeonGame.Position is " + p + " " + aDungeon.getId(p);
     }
     else {
-      return "No Treasure collected, current position is " + p;
+      return "No dungeonGame.Treasure collected, current position is " + p;
     }
   }
 
   @Override
   public boolean pickTreasure() {
-    if(!ActualDungeon.dungeon[p.x][p.y].hasTreasure()) {
+    if(!aDungeon.dungeon[p.x][p.y].hasTreasure()) {
       return false;
     }
-    Treasure t = ActualDungeon.dungeon[p.x][p.y].pickTreasure();
+    Treasure t = aDungeon.dungeon[p.x][p.y].pickTreasure();
     treasureCollected.add(t);
     return true;
   }

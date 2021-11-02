@@ -1,4 +1,7 @@
+package dungeonGame;
+
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Kruskal {
   class subset {
@@ -46,7 +49,7 @@ public class Kruskal {
       subsets[xroot].rank++;
     //}
   }
-  // The main function to construct MST using Kruskal's
+  // The main function to construct MST using dungeonGame.Kruskal's
   // algorithm
   Edges [] KruskalMST(int doc)
   {
@@ -98,7 +101,9 @@ public class Kruskal {
         count++;
       }
       else {
+        if(x != y) {
         removed.add(next_edge);
+        }
       }
     }
     int k1 = 0;
@@ -118,6 +123,7 @@ public class Kruskal {
     }
     //System.out.println("Following are the edges in "
         //+ "the constructed MST");
+    Collections.sort(result);
     return result.toArray(new Edges[0]);
     }
 }

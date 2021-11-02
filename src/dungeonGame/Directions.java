@@ -1,3 +1,5 @@
+package dungeonGame;
+
 /**
  * utility class.
  */

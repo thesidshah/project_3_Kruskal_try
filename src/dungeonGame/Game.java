@@ -1,3 +1,5 @@
+package dungeonGame;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,29 +18,29 @@ public class Game {
     col = 0;
     doc = 0;
     br = new BufferedReader(new InputStreamReader(System.in));
-    p = new ActualPlayer();
+
     isWrapping = false;
     Boolean flag = true;
     aDungeon = null;
     while (flag) {
       try {
-        System.out.println("Enter the number of caves in a row for the dungeon\n");
+        System.out.println("Enter the number of caves in a row for the dungeon");
         row = Integer.parseInt(br.readLine());
-        System.out.println("Enter the number of columns for the dungeon\n");
+        System.out.println("Enter the number of columns for the dungeon");
         col = Integer.parseInt(br.readLine());
-        System.out.println("Enter the degree of connectivity\n");
+        System.out.println("Enter the degree of connectivity");
         doc = Integer.parseInt(br.readLine());
         System.out.println("Should the dungeon be wrapping? Enter true/ false");
         isWrapping = Boolean.parseBoolean(br.readLine());
-        System.out.println("Enter the percentage of treasure:\n");
+        System.out.println("Enter the percentage of treasure:");
         double t = Integer.parseInt(br.readLine());
         int treasurePercent = (int)Math.ceil((row*col) * t/100);
         System.out.println("Number of treasure caves are " + treasurePercent);
         aDungeon = new ActualDungeon(col,row,doc, treasurePercent,isWrapping);
-        System.out.println("Player position retrieved from Dungeon is :" + aDungeon.playerPosition);
+        p = new ActualPlayer(aDungeon);
+        System.out.println("dungeonGame.Player position retrieved from Dungeon is :" + aDungeon.playerPosition);
         p.setPosition(aDungeon.playerPosition);
-        System.out.println("Player position set is "+ p.getPosition());
-//        aDungeon.generateDungeon();
+        System.out.println("dungeonGame.Player position set is "+ p.getPosition());
         flag = false;
         System.out.println(aDungeon.displayDungeon());
       }
@@ -52,19 +54,16 @@ public class Game {
 
   protected void movePlayer() throws IOException {
 
-
-
     boolean flag = false;
-
     System.out.println("Starting with player at position : " + aDungeon.playerPosition);
     if(aDungeon.playerPosition.x == -1 || aDungeon.playerPosition.y == -1) {
-      System.out.println("Player position x or y is -1");
-      aDungeon.generateStartEnd();
+      System.out.println("dungeonGame.Player position x or y is -1");
     }
     while(!flag) {
-      ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].cavePathsAvailable(aDungeon.playerPosition);
+      aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].cavePathsAvailable(aDungeon.playerPosition);
 
       System.out.println("Enter the direction you wish to move in:");
+      System.out.println("U : up \nD : down\nR : right\nL : left");
       char dir = (char) br.read();
       br.readLine();
       flag = false;
@@ -73,9 +72,9 @@ public class Game {
       switch (dir) {
         case 'U':
         case 'u':
-          if (ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].north_id != -1) {
-            x = ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].north.x;
-            y = ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].north.y;
+          if (aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].north_id != -1) {
+            x = aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].north.x;
+            y = aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].north.y;
             aDungeon.playerPosition.x = x;
             aDungeon.playerPosition.y = y;
             p.setPosition(aDungeon.playerPosition);
@@ -84,9 +83,9 @@ public class Game {
           break;
         case 'D':
         case 'd':
-          if (ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].south_id != -1) {
-            x = ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].south.x;
-            y = ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].south.y;
+          if (aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].south_id != -1) {
+            x = aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].south.x;
+            y = aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].south.y;
             aDungeon.playerPosition.x = x;
             aDungeon.playerPosition.y = y;
             p.setPosition(aDungeon.playerPosition);
@@ -95,9 +94,9 @@ public class Game {
           break;
         case 'L':
         case 'l':
-          if (ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].west_id != -1) {
-            x = ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].west.x;
-            y = ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].west.y;
+          if (aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].west_id != -1) {
+            x = aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].west.x;
+            y = aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].west.y;
             aDungeon.playerPosition.x = x;
             aDungeon.playerPosition.y = y;
             p.setPosition(aDungeon.playerPosition);
@@ -106,9 +105,9 @@ public class Game {
           break;
         case 'R':
         case 'r':
-          if (ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].east_id != -1) {
-            x = ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].east.x;
-            y = ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].east.y;
+          if (aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].east_id != -1) {
+            x = aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].east.x;
+            y = aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].east.y;
             aDungeon.playerPosition.x = x;
             aDungeon.playerPosition.y = y;
             p.setPosition(aDungeon.playerPosition);
@@ -120,13 +119,11 @@ public class Game {
       } if(!flag) {
         System.out.println("Can not move in this direction!");
       }
-//      System.out.println(aDungeon.displayDungeon());
     }
   }
   private void pickTreasureForPlayer() throws IOException {
 
-    boolean flag;
-    if(ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].hasTreasure()) {
+    if(aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y].hasTreasure()) {
       System.out.println("The cave contains treasure(s)");
       System.out.println("Do you wish to pick a treasure?");
       System.out.println("Enter Y/N:");
@@ -136,17 +133,17 @@ public class Game {
       }
     }
     else {
-      System.out.println("Treasure not found");
+      System.out.println("dungeonGame.Treasure not found");
     }
   }
 
   private void options() throws IOException {
 
-    while(ActualDungeon.getId(aDungeon.playerPosition) != aDungeon.end) {
+    while(aDungeon.getId(aDungeon.playerPosition) != aDungeon.end) {
       System.out.println("1. Dump dungeon on screen");
       System.out.println("2. Print player state");
       System.out.println("3. Print cave state");
-      System.out.println("4. Move Player");
+      System.out.println("4. Move dungeonGame.Player");
       System.out.println("5. Pick up treasure");
       int ch = Integer.parseInt(br.readLine());
       switch(ch) {
@@ -157,7 +154,7 @@ public class Game {
           System.out.println(p.getState());
           break;
         case 3:
-          System.out.println(ActualDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y]);
+          System.out.println(aDungeon.dungeon[aDungeon.playerPosition.x][aDungeon.playerPosition.y]);
           break;
         case 4:
           movePlayer();
@@ -173,5 +170,9 @@ public class Game {
   }
   public void startGame() throws IOException {
     options();
+  }
+
+  public Cave [][] getDungeon() {
+    return aDungeon.getDungeon();
   }
 }

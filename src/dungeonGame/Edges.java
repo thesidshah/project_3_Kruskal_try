@@ -1,14 +1,22 @@
+package dungeonGame;
+
 import java.util.Objects;
 
-class Edges {
+class Edges implements Comparable<Edges>{
 
 
   private int src, dest;
 
   public Edges(int src, int dest) {
 
-    this.src = src;
-    this.dest = dest;
+    if(src < dest) {
+      this.src = src;
+      this.dest = dest;
+    }
+    else {
+      this.dest = src;
+      this.src = dest;
+    }
   }
 
   @Override
@@ -43,5 +51,16 @@ class Edges {
 
   public void setDest(int dest) {
     this.dest = dest;
+  }
+
+  @Override
+  public String toString() {
+    return "src=" + src +
+        ", dest=" + dest;
+  }
+
+  @Override
+  public int compareTo(Edges o) {
+    return this.src - o.src;
   }
 }

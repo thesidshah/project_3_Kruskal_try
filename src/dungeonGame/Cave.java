@@ -1,3 +1,5 @@
+package dungeonGame;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class Cave {
   }
 
   public String state() {
-    String st = "Cave : " + caveId
+    String st = "dungeonGame.Cave : " + caveId
         + "\nType: " + type + "\n"
         + "Treasures:" + treasure
         + "\nNorth: " + north
@@ -48,7 +50,7 @@ public class Cave {
 
   @Override
   public String toString() {
-    String st = "Cave : " + caveId
+    String st = "dungeonGame.Cave : " + caveId
         + "\nType: " + type + "\n"
         + "Treasures:" + this.treasure
         + "\nNorth: " + north
@@ -100,7 +102,7 @@ public class Cave {
       treasure = null;
     }
     else {
-      type = "Cave";
+      type = "dungeonGame.Cave";
     }
   }
   boolean canSetTreasure() {
@@ -134,8 +136,7 @@ public class Cave {
 
   //Package private for dungeon to call.
    void cavePathsAvailable(Position x) {
-    System.out.println("Dungeon paths available at Position :" + ActualDungeon.getPosition(caveId)
-        + "And the corresponding id is :" + caveId);
+    System.out.println("Dungeon paths available at :" + caveId);
     System.out.println("North -> " + north);
     System.out.println("North id-> " + north_id);
     System.out.println("South -> " + south);

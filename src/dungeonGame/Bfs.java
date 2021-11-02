@@ -1,3 +1,5 @@
+package dungeonGame;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -40,6 +42,10 @@ public class Bfs {
     while (pred[crawl] != -1) {
       path.add(pred[crawl]);
       crawl = pred[crawl];
+    }
+    System.out.println("Path is ::");
+    for (int i = path.size() - 1; i >= 0; i--) {
+      System.out.print(path.get(i) + " ");
     }
     return dist[dest];
   }
@@ -102,7 +108,7 @@ public class Bfs {
    * @return path from start to end.
    * @throws IllegalArgumentException when BFS is not performed.
    */
-  int [] getPath() throws IllegalArgumentException {
+  public int [] getPath() throws IllegalArgumentException {
      if(queue == null) {
        throw new IllegalArgumentException("Please perform BFS first.");
      }

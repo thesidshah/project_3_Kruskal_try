@@ -1,3 +1,5 @@
+package dungeonGame;
+
 import java.util.Objects;
 
 public class Position {
@@ -10,7 +12,7 @@ public class Position {
     this.y = y;
 //    visited = false;
     isBorder = false;
-//    Parent = new Position(x, y);
+//    Parent = new dungeonGame.Position(x, y);
   }
 
   public int getX() {

@@ -1,3 +1,4 @@
+package dungeonGame;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -5,7 +6,7 @@ import java.util.stream.Stream;
 
 
 public class ActualDungeon {
-  public static Cave [][] dungeon;
+  Cave [][] dungeon;
   static int [] size;
   Set<Edges> validEdges;
   boolean isWrapping;
@@ -16,20 +17,12 @@ public class ActualDungeon {
   int end;
   int treasurePercent;
 
-  public Set<Edges> getValidEdges() {
-    return validEdges;
-  }
-
-  public void setValidEdges(Set<Edges> validEdges) {
-    this.validEdges = validEdges;
-  }
-
   ActualDungeon(int rows, int cols, int doc, int treasurePercent, boolean isWrapping ) throws IllegalArgumentException {
 
-    if(rows < 5 && cols < 5) {
-      throw new IllegalArgumentException("The number of rows and columns"
-        + "should be at least 5");
-    }
+//    if(rows < 5 || cols < 5) {
+//      throw new IllegalArgumentException("The number of rows and columns"
+//        + "should be at least 5");
+//    }
     if(treasurePercent < 0) {
       System.out.println("The treasure% passed should be non negative.");
     }
@@ -61,15 +54,20 @@ public class ActualDungeon {
     else {
       genWrapEdges();
     }
+    for(Edges e : validEdges) {
+      System.out.println(e.getSrc()+" "+e.getDest());
+    }
     Kruskal k = new Kruskal(size[0]*size[1],validEdges.size(),validEdges.toArray(new Edges[0]));
     Edges [] pathways = k.KruskalMST(doc);
     updateDungeon(pathways);
     validEdges = Stream.of(pathways).collect(Collectors.toSet());
+    System.out.println("-----------------------------------------------------");
+    for(Edges e : validEdges) {
+      System.out.println(e.getSrc()+" "+e.getDest());
+    }
     updateState();
     generateStartEnd();
     updateTreasures(treasurePercent);
-//    playerPosition = getPosition(start);
-//    System.out.println("Player position after updated treasure points " + playerPosition);
   }
 
   private void updateState() {
@@ -154,7 +152,7 @@ public class ActualDungeon {
   }
 
   //package private for cave to call.
-   static Position getPosition(int id) {
+    Position getPosition(int id) {
 
     if(id == 0) {
       return new Position(0,0);
@@ -187,12 +185,19 @@ public class ActualDungeon {
               check[c] = 0;
             }
           }
-//          System.out.println("check[0]:"+check[0]);
-//          System.out.println("check[1]:"+check[1]);
-          Edges actualEdge = new Edges(dungeon[i][j].caveId, dungeon[check[0]][check[1]].caveId);
-          validEdges.add(actualEdge);
+          if(dungeon[i][j].caveId != dungeon[check[0]][check[1]].caveId) {
+            Edges actualEdge = new Edges(dungeon[i][j].caveId, dungeon[check[0]][check[1]].caveId);
+            validEdges.add(actualEdge);
+//            Collections.sort(validEdges);
+          }
         }
       }
+    }
+    List <Edges> validEdgesCheck = new ArrayList();
+    validEdgesCheck.addAll(validEdges);
+    Collections.sort(validEdgesCheck);
+    for(Edges e : validEdgesCheck) {
+      System.out.println(e +" Inside valid edges check");
     }
   }
   private void genNonWrapEdges() {
@@ -209,6 +214,12 @@ public class ActualDungeon {
           validEdges.add(actualEdge);
         }
       }
+    }
+    List <Edges> validEdgesCheck = new ArrayList();
+    validEdgesCheck.addAll(validEdges);
+    Collections.sort(validEdgesCheck);
+    for(Edges e : validEdgesCheck) {
+      System.out.println(e +" Inside valid edges check");
     }
   }
 
@@ -267,23 +278,15 @@ public class ActualDungeon {
   //remember to make this method private
   //Made it package private for cases where
   // the start and player position are not on the board.
-  void generateStartEnd() {
+  private void generateStartEnd() {
 
     int count = 0;
     while(count <= 200) {
       start = (int)Math.floor(Math.random() * ((size[0] * size[1]) - 1));
       end = (int)Math.floor(Math.random() * ((size[0] * size[1]) - 1));
-//      System.out.println("Generated start: " + start);
-//      System.out.println("Generated end: " + end);
-//      playerPosition = getPosition(start);
-//      boolean dfs = DFS(getPosition(start), 0, end);
       int bfs_dist = BFS();
-//      System.out.println(String.format("For starting id %d and end id %d \n" +
-//          "using DFS we get that the distance is more than 5 or not? ",start,end) + dfs);
       count++;
       playerPosition = getPosition(start);
-//      System.out.println("start is " + start);
-//      System.out.println("Player position is "+ playerPosition);
       System.out.println(count + ":: failed Iteration");// remember to delete this
       if(bfs_dist >= 5) {
         playerPosition = getPosition(start);
@@ -294,10 +297,16 @@ public class ActualDungeon {
     }
 
   }
-  static int getId(Position p) {
+
+  /**
+   * A function to get the cave id
+   * @param p position
+   * @return id
+   */
+    int getId(Position p) {
     return dungeon[p.x][p.y].caveId;
   }
-  List<Integer> visited = new ArrayList<>();
+
 
   private int BFS() {
     Bfs g = new Bfs();
@@ -316,9 +325,11 @@ public class ActualDungeon {
 
 
   private void updateTreasures(int numCaves) {
+    System.out.println("Number of caves are :- " + numCaves);
     int l;
     int id;
     int count = numCaves;
+    int c = 0;
     do {
       id = (int)Math.floor(Math.random() * numCaves);
       Position x = getPosition(id);
@@ -327,6 +338,33 @@ public class ActualDungeon {
         dungeon[x.x][x.y].addTreasure(e);
         count--;
       }
+      else {
+        c++;
+        if(c > 30) {
+          System.out.println("Can not place treasure.");
+          break;
+        }
+      }
     } while(count >= 0);
+  }
+
+  /**
+   * Sending a deep copy of the dungeon.
+   * @return Grid of dungeons.
+   */
+  public Cave[][] getDungeon() {
+    if (dungeon == null)
+      return null;
+//    Cave[][] result = new Cave[dungeon.length][];
+//    for (int r = 0; r < dungeon[0].length; r++) {
+//      result[r] = dungeon[r].clone();
+//    }
+//    System.out.println("Dungeon length 0" + dungeon[0].length);
+//    System.out.println("Dungeon length 1" + dungeon[1].length);
+//    int count = 0;
+//    for(Cave c : dungeon[1]) {
+//      System.out.println(count++);
+//    }
+    return dungeon;
   }
 }
